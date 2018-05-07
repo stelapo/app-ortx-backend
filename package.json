@@ -1,0 +1,19 @@
+{
+  "name": "app-ortx-backend",
+  "version": "1.0.0",
+  "description": "Web app interna per gestione ordini Retex",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stelapo/app-ortx-backend.git"
+  },
+  "author": "Lapo Pancani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stelapo/app-ortx-backend/issues"
+  },
+  "homepage": "https://github.com/stelapo/app-ortx-backend#readme"
+}
