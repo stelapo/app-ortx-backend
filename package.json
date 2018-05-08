@@ -2,9 +2,12 @@
   "name": "app-ortx-backend",
   "version": "1.0.0",
   "description": "Web app interna per gestione ordini Retex",
-  "main": "app.js",
+  "main": "dist/server",
+  "types": "dist/server",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server.ts",    
+    "debug": "node --inspect -r ts-node/register ./src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,15 @@
   "bugs": {
     "url": "https://github.com/stelapo/app-ortx-backend/issues"
   },
-  "homepage": "https://github.com/stelapo/app-ortx-backend#readme"
+  "homepage": "https://github.com/stelapo/app-ortx-backend#readme",
+  "devDependencies": {
+    "@types/express": "^4.11.1",
+    "@types/node": "^10.0.4",
+    "nodemon": "^1.17.4",
+    "ts-node": "^6.0.3",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
