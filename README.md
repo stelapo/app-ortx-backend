@@ -29,7 +29,7 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
  - `"main": "dist/server"` < This tells Node.js to load `dist/server.js`
  - `"types": "dist/server"` < This tells TypeScript to load `dist/server.d.ts`
 
-## Principal modules for project ##
+## Main modules for project ##
 1. `npm install --save express` and `npm install --save-dev @types/express`
 2. `npm install --save mongoose` and `npm install --save-dev @types/mongoose`
 3. `npm install --save winston` and `npm install --save-dev @types/winston`
