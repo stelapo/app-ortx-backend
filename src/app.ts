@@ -1,26 +1,47 @@
+import { Document } from 'mongoose';
 import express from "express";
+import * as core from "express-serve-static-core";
 import { Request, Response } from 'express';
 import bodyParser from 'body-parser';
+import passport from 'passport';
+import OAuth2Strategy from 'passport-oauth2';
 import morgan from 'morgan';
 import Config from './config';
 import Utils from './utils';
 import Logger from './logger';
 import { DailyRotateFileTransportInstance } from 'winston';
+import DivisionCtrl from './controllers/DivisionCtrl';
+import UserModel from "./models/User";
+
 //import * as path from "path";
 
 class App {
-    public express: any;
+    private _version: string = '1.0.0';
+    private _express: core.Express;
     private conf: Config;
-    private logger: Logger;
+    private _logger: Logger;
 
     constructor(conf: Config) {
         this.conf = conf;
-        this.logger = new Logger('serverLog', this.conf.winstonFilename);
-        this.express = express();
+        this._logger = new Logger('serverLog', conf);
+        this._express = express();
+        this.prepare();
         this.mountHomeRoute();
-        this.logger.info('END App Constructor');
+        this.mountAuthRoute();
+        this.mountDivisionRoutes();
+        this.preparePassport();
+        this._logger.info('App is starting.');
+        this._logger.info('Version ' + this._version);
         /*this.prepareStatic();
         this.setViewEngine();*/
+    }
+
+    get express(): core.Express {
+        return this._express;
+    }
+
+    get logger(): Logger {
+        return this._logger;
     }
     /*
         // This serves everything in `static` as static files
@@ -29,12 +50,39 @@ class App {
         }
     */
     private prepare(): void {
-        this.express.use(bodyParser.json());
-        this.express.use(bodyParser.urlencoded({ extended: false }));
-        this.express.use(logErrors);
-        this.express.use(clientErrorHandler);
-        this.express.use(errorHandler);
-        this.express.use(morgan('combined'));
+        this._express.use(bodyParser.json());
+        this._express.use(bodyParser.urlencoded({ extended: false }));
+        this._express.use(logErrors);
+        this._express.use(clientErrorHandler);
+        this._express.use(errorHandler);
+        this._express.use(morgan('combined'));
+    }
+
+    private preparePassport(): void {
+        passport.use('provider', new OAuth2Strategy({
+            authorizationURL: this.conf.creds.authEndpoint,
+            tokenURL: this.conf.creds.tokenEndpoint,
+            clientID: this.conf.creds.clientID,
+            clientSecret: this.conf.creds.clientSecret,
+            callbackURL: this.conf.creds.callbackURL
+        }, function (accessToken: string, refreshToken: string, profile: any, done: Function) {
+            UserModel.findOneAndUpdate({ UserId: profile.id }, function (err: Error, user: any) {
+                done(err, user);
+            });
+        }));
+
+        passport.serializeUser(function (user: any, done: Function) {
+            done(null, user.email);
+        });
+
+        passport.deserializeUser(function (id: string, done: Function) {
+            UserModel.findById(id, function (err: Error, user: any) {
+                done(err, user);
+            });
+        });
+
+        this._express.use(passport.initialize());
+        this._express.use(passport.session());
     }
 
     private prepareLog(): void {
@@ -66,12 +114,33 @@ class App {
     private mountHomeRoute(): void {
         const router = express.Router();
         router.get("/", (req, res) => {
-            this.logger.info('GET /');
+            this._logger.info('GET /');
             res.json({
                 message: "Hello World!"
             });
         });
-        this.express.use(router);
+        this._express.use(router);
+    }
+
+    private mountAuthRoute(): void {
+        this._express.get("/auth/provider", passport.authenticate('provider'));
+        this._express.get('/auth/provider/callback',
+            passport.authenticate('provider', {
+                successRedirect: '/',
+                failureRedirect: '/login'
+            }));
+    }
+
+    private mountDivisionRoutes(): void {
+        const divisionCtrl = new DivisionCtrl(this._logger);
+        const router = express.Router();
+        router.route('/divisions/count').get(divisionCtrl.count);
+        router.route('/divisions').get(divisionCtrl.getAll);
+        router.route('/divisions/:id').get(divisionCtrl.get);
+        router.route('/divisions/:id').put(divisionCtrl.update);
+        router.route('/divisions').post(divisionCtrl.insert);
+        router.route('/divisions/:id').delete(divisionCtrl.delete);
+        this._express.use(passport.authenticate('provider', { session: false }), router);
     }
 }
 

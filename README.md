@@ -36,3 +36,15 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 4. `npm install --save express-winston` and `npm install --save-dev @types/express-winston`
 5. `npm install --save winston-daily-rotate-file`
 6. `npm install --save moment` and `npm install --save-dev @types/moment`
+7. `npm install --save dotenv` and `npm install --save-dev @types/dotenv`
+8. `npm install --save passport` and `npm install --save-dev @types/passport`
+9. `npm install --save passport-oauth2` and `npm install --save-dev @types/passport-oauth2`
+10. `npm install --save passport-http-bearer` and `npm install --save-dev @types/passport-http-bearer`
+11. `npm install --save node-jwt`
+npm install xml2js --save
+npm install request --save
+npm install async --save
+
+npm install --save-dev @types/xml2js
+npm install --save-dev @types/request
+npm install --save-dev @types/async
