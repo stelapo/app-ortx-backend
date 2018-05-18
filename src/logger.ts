@@ -1,19 +1,21 @@
 import * as winston from 'winston';
 import Utils from './utils';
+import Config from './config';
 //winston.transports.DailyRotateFile = require('winston-daily-rotate-file');
 
 export default class Logger {
     private name: string;
 
-    constructor(name: string, filename: string) {
-        this.name = name;
-        //winston.setLevels('debug');
-        //winston.add(winston.transports.Console);
-        console.log(Utils.formattedTimestamp());
+    constructor(name: string, conf: Config) {
+        this.name = name;                
+        winston.remove(winston.transports.Console);
+        if (conf.consoleOutput) {
+            winston.add(winston.transports.Console, { level: conf.logLevel, timestamp: Utils.formattedTimestamp });
+        }
         winston.add(require('winston-daily-rotate-file'), {
-            filename: filename,
+            filename: conf.winstonFilename,
             datePattern: 'YYYYMMDD',
-            level: 'debug',
+            level: conf.logLevel,
             timestamp: Utils.formattedTimestamp,
             //localTime: true,
             //prepend: true,

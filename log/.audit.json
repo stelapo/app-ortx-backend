@@ -6,9 +6,19 @@
     "auditLog": "log/.audit.json",
     "files": [
         {
-            "date": 1525803421371,
-            "name": "log/20180508_winston.log",
-            "hash": "a3ae73517461d74f6f5e5f8d7d224c24"
+            "date": 1526662559804,
+            "name": "log/20180518_winston.log",
+            "hash": "3bb0b4faeb0dc7ceccfe078406835e91"
+        },
+        {
+            "date": 1526665761642,
+            "name": "log/20180518_winston.log",
+            "hash": "36a7e685b721b26cf7c7cea997c9c19b"
+        },
+        {
+            "date": 1526666012761,
+            "name": "log/20180518_winston.log",
+            "hash": "981cbc02b2410f71d90d62207aca0cb9"
         }
     ]
 }
