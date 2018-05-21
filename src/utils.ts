@@ -35,11 +35,4 @@ export default class Utils {
         }
         return Array.isArray(element) ? element[0] : element;
     };
-
-    public static isAuthenticated(req: Request, res: Response, next: NextFunction) {
-        if (req.isAuthenticated()) {
-            return next();
-        }
-        res.redirect('/login');
-    };
 }

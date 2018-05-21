@@ -31,20 +31,19 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 
 ## Main modules for project ##
 1. `npm install --save express` and `npm install --save-dev @types/express`
+npm install --save express-session and npm install --save-dev @types/express-session
 2. `npm install --save mongoose` and `npm install --save-dev @types/mongoose`
 3. `npm install --save winston` and `npm install --save-dev @types/winston`
 4. `npm install --save express-winston` and `npm install --save-dev @types/express-winston`
 5. `npm install --save winston-daily-rotate-file`
 6. `npm install --save moment` and `npm install --save-dev @types/moment`
 7. `npm install --save dotenv` and `npm install --save-dev @types/dotenv`
+7. `npm install --save express-auth-parser`
 8. `npm install --save passport` and `npm install --save-dev @types/passport`
 9. `npm install --save passport-oauth2` and `npm install --save-dev @types/passport-oauth2`
+10. `npm install --save passport-azure-oauth2`
 10. `npm install --save passport-http-bearer` and `npm install --save-dev @types/passport-http-bearer`
-11. `npm install --save node-jwt`
-npm install xml2js --save
-npm install request --save
-npm install async --save
-
-npm install --save-dev @types/xml2js
-npm install --save-dev @types/request
-npm install --save-dev @types/async
+11. `npm install --save jsonwebtoken` and `npm install --save-dev @types/jsonwebtoken`
+12. `npm install xml2js --save` and `npm install --save-dev @types/xml2js`
+13. `npm install request --save` and `npm install --save-dev @types/request`
+14. `npm install async --save` and `npm install --save-dev @types/async`

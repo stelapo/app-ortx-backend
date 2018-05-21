@@ -3,5 +3,5 @@ yarn.lock
 package-lock.json
 dist/
 log/
-src/config.ts
 .env
+src/config.ts

@@ -1,10 +1,12 @@
 import { Document } from 'mongoose';
 import express from "express";
 import * as core from "express-serve-static-core";
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import session from 'express-session';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import OAuth2Strategy from 'passport-oauth2';
+//import AzureOAuth2Strategy from "passport-azure-oauth2";
 import morgan from 'morgan';
 import Config from './config';
 import Utils from './utils';
@@ -12,6 +14,8 @@ import Logger from './logger';
 import { DailyRotateFileTransportInstance } from 'winston';
 import DivisionCtrl from './controllers/DivisionCtrl';
 import UserModel from "./models/User";
+var AzureOAuth2Strategy = require("passport-azure-oauth2");
+import * as jwt from 'jsonwebtoken';
 
 //import * as path from "path";
 
@@ -26,10 +30,12 @@ class App {
         this._logger = new Logger('serverLog', conf);
         this._express = express();
         this.prepare();
+        this.preparePassport();
+        //Routes
         this.mountHomeRoute();
         this.mountAuthRoute();
-        this.mountDivisionRoutes();
-        this.preparePassport();
+        this.mountApiRoutes();
+
         this._logger.info('App is starting.');
         this._logger.info('Version ' + this._version);
         /*this.prepareStatic();
@@ -50,6 +56,17 @@ class App {
         }
     */
     private prepare(): void {
+        this._express.use(require('express-auth-parser'));
+        this._express.use(session({
+            secret: 'secrettexthere',
+            saveUninitialized: true,
+            resave: true/*,
+            // using store session on MongoDB using express-session + connect
+            store: new MongoStore({
+              url: config.urlMongo,
+              collection: 'sessions'
+            })*/
+        }));
         this._express.use(bodyParser.json());
         this._express.use(bodyParser.urlencoded({ extended: false }));
         this._express.use(logErrors);
@@ -59,26 +76,31 @@ class App {
     }
 
     private preparePassport(): void {
-        passport.use('provider', new OAuth2Strategy({
+        passport.use('provider', new AzureOAuth2Strategy({ //new OAuth2Strategy({
             authorizationURL: this.conf.creds.authEndpoint,
             tokenURL: this.conf.creds.tokenEndpoint,
             clientID: this.conf.creds.clientID,
             clientSecret: this.conf.creds.clientSecret,
-            callbackURL: this.conf.creds.callbackURL
-        }, function (accessToken: string, refreshToken: string, profile: any, done: Function) {
-            UserModel.findOneAndUpdate({ UserId: profile.id }, function (err: Error, user: any) {
+            callbackURL: this.conf.creds.callbackURL,
+            resource: 'https://graph.microsoft.com'
+        }, function (accessToken: string, refreshToken: string, params: any, profile: any, done: Function) {
+            var user =
+                jwt.decode(params.id_token, { complete: false });
+            done(null, user);
+            /*UserModel.findOneAndUpdate({ UserId: profile.id }, function (err: Error, user: any) {
                 done(err, user);
-            });
+            });*/
         }));
 
         passport.serializeUser(function (user: any, done: Function) {
-            done(null, user.email);
+            done(null, user.upn);
         });
 
-        passport.deserializeUser(function (id: string, done: Function) {
-            UserModel.findById(id, function (err: Error, user: any) {
+        passport.deserializeUser(function (user: any, done: Function) {
+            done(null, user);
+            /*UserModel.findById(id, function (err: Error, user: any) {
                 done(err, user);
-            });
+            });*/
         });
 
         this._express.use(passport.initialize());
@@ -112,37 +134,50 @@ class App {
     */
     // Prepare the / route to show a hello world page
     private mountHomeRoute(): void {
-        const router = express.Router();
-        router.get("/", (req, res) => {
+        this._express.get("/home", (req, res) => {
             this._logger.info('GET /');
             res.json({
                 message: "Hello World!"
             });
         });
-        this._express.use(router);
+    }
+
+    private authCallback() {
+
     }
 
     private mountAuthRoute(): void {
-        this._express.get("/auth/provider", passport.authenticate('provider'));
+        this._express.get("/auth/provider", passport.authenticate('provider'/*, { session: false }*/));
         this._express.get('/auth/provider/callback',
             passport.authenticate('provider', {
-                successRedirect: '/',
+                successRedirect: '/api/divisions/count',
                 failureRedirect: '/login'
             }));
     }
 
-    private mountDivisionRoutes(): void {
+    private mountApiRoutes(): void {
         const divisionCtrl = new DivisionCtrl(this._logger);
         const router = express.Router();
-        router.route('/divisions/count').get(divisionCtrl.count);
-        router.route('/divisions').get(divisionCtrl.getAll);
-        router.route('/divisions/:id').get(divisionCtrl.get);
-        router.route('/divisions/:id').put(divisionCtrl.update);
-        router.route('/divisions').post(divisionCtrl.insert);
-        router.route('/divisions/:id').delete(divisionCtrl.delete);
-        this._express.use(passport.authenticate('provider', { session: false }), router);
+        //router.route('/api/divisions/count').get(divisionCtrl.count);
+        this._express.get("/api/divisions/count", isAuthenticated, (req, res) => {
+            this._logger.info('GET /api/divisions/count');
+            divisionCtrl.count(req, res);
+        });
+        router.route('/api/divisions').get(divisionCtrl.getAll);
+        router.route('/api/divisions/:id').get(divisionCtrl.get);
+        router.route('/api/divisions/:id').put(divisionCtrl.update);
+        router.route('/api/divisions').post(divisionCtrl.insert);
+        router.route('/api/divisions/:id').delete(divisionCtrl.delete);
+        this._express.use(/*isAuthenticated,*/ router);
     }
 }
+
+function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.status(403).json({ message: 'Forbidden' });
+};
 
 
 function logErrors(err: Error, req: Request, res: Response, next: Function) {
