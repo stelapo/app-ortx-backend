@@ -31,19 +31,22 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 
 ## Main modules for project ##
 1. `npm install --save express` and `npm install --save-dev @types/express`
-npm install --save express-session and npm install --save-dev @types/express-session
 2. `npm install --save mongoose` and `npm install --save-dev @types/mongoose`
-3. `npm install --save winston` and `npm install --save-dev @types/winston`
-4. `npm install --save express-winston` and `npm install --save-dev @types/express-winston`
-5. `npm install --save winston-daily-rotate-file`
-6. `npm install --save moment` and `npm install --save-dev @types/moment`
-7. `npm install --save dotenv` and `npm install --save-dev @types/dotenv`
-7. `npm install --save express-auth-parser`
-8. `npm install --save passport` and `npm install --save-dev @types/passport`
-9. `npm install --save passport-oauth2` and `npm install --save-dev @types/passport-oauth2`
-10. `npm install --save passport-azure-oauth2`
-10. `npm install --save passport-http-bearer` and `npm install --save-dev @types/passport-http-bearer`
-11. `npm install --save jsonwebtoken` and `npm install --save-dev @types/jsonwebtoken`
-12. `npm install xml2js --save` and `npm install --save-dev @types/xml2js`
-13. `npm install request --save` and `npm install --save-dev @types/request`
-14. `npm install async --save` and `npm install --save-dev @types/async`
+3. `npm install --save express-session` and `npm install --save-dev @types/express-session`
+4. `npm install --save connect-mongo` and `npm install --save-dev @types/connect-mongo`
+5. `npm install --save morgan` and `npm install --save-dev @types/morgan`
+6. `npm install --save winston` and `npm install --save-dev @types/winston`
+7. `npm install --save express-winston` and `npm install --save-dev @types/express-winston`
+8. `npm install --save winston-daily-rotate-file`
+9. `npm install --save moment` and `npm install --save-dev @types/moment`
+10. `npm install --save dotenv` and `npm install --save-dev @types/dotenv`
+11. `npm install --save express-auth-parser`
+12. `npm install --save passport` and `npm install --save-dev @types/passport`
+13. `npm install --save passport-oauth2` and `npm install --save-dev @types/passport-oauth2`
+14. `npm install --save passport-azure-oauth2`
+15. `npm install --save passport-http-bearer` and `npm install --save-dev @types/passport-http-bearer`
+16. `npm install --save jsonwebtoken` and `npm install --save-dev @types/jsonwebtoken`
+17. `npm install xml2js --save` and `npm install --save-dev @types/xml2js`
+18. `npm install request --save` and `npm install --save-dev @types/request`
+19. `npm install async --save` and `npm install --save-dev @types/async`
+20. `npm install sqlite3 --save` and `npm install --save-dev @types/sqlite3`

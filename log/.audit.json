@@ -6,39 +6,39 @@
     "auditLog": "log/.audit.json",
     "files": [
         {
-            "date": 1526921199474,
-            "name": "log/20180521_winston.log",
-            "hash": "b03ed9618182df53053d690cbd04e6cb"
+            "date": 1527170843020,
+            "name": "log/20180524_winston.log",
+            "hash": "51241914b7200e05fcdbdc26853a84fe"
         },
         {
-            "date": 1526922345146,
-            "name": "log/20180521_winston.log",
-            "hash": "2fb28d25f07549989f6ad06a0c08bd74"
+            "date": 1527170904900,
+            "name": "log/20180524_winston.log",
+            "hash": "f279003ccd95d139d672db540df7cf54"
         },
         {
-            "date": 1526922458472,
-            "name": "log/20180521_winston.log",
-            "hash": "8fd339375dcebbceb72ced8606446714"
+            "date": 1527170930992,
+            "name": "log/20180524_winston.log",
+            "hash": "a8f5db776a844fc4e52496de1895a02b"
         },
         {
-            "date": 1526922512518,
-            "name": "log/20180521_winston.log",
-            "hash": "4e3a86de70a3611eeb2d34b023ae62f7"
+            "date": 1527171012218,
+            "name": "log/20180524_winston.log",
+            "hash": "d20124476431cc6640d9a8547f1e9b01"
         },
         {
-            "date": 1526922749257,
-            "name": "log/20180521_winston.log",
-            "hash": "282123014a4b7814a4477a99d0081515"
+            "date": 1527171170747,
+            "name": "log/20180524_winston.log",
+            "hash": "1cd2e63729d7203246ce48ab80405e1f"
         },
         {
-            "date": 1526923516766,
-            "name": "log/20180521_winston.log",
-            "hash": "db683f451594571f22705db2ebe1ff81"
+            "date": 1527171191129,
+            "name": "log/20180524_winston.log",
+            "hash": "5f32dca989ee662aae1e802d584f469b"
         },
         {
-            "date": 1526923894291,
-            "name": "log/20180521_winston.log",
-            "hash": "935f626fd275184a163b900efdf38c29"
+            "date": 1527171213786,
+            "name": "log/20180524_winston.log",
+            "hash": "951765cb7d67c785e3f134d996ba31bc"
         }
     ]
 }

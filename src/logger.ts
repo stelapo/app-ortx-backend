@@ -7,7 +7,7 @@ export default class Logger {
     private name: string;
 
     constructor(name: string, conf: Config) {
-        this.name = name;                
+        this.name = name;
         winston.remove(winston.transports.Console);
         if (conf.consoleOutput) {
             winston.add(winston.transports.Console, { level: conf.logLevel, timestamp: Utils.formattedTimestamp });
@@ -38,5 +38,9 @@ export default class Logger {
 
     error(format: string, ...params: any[]) {
         winston.log.apply(this, ['error', this.name + ' - ' + format].concat(params));
+    }
+
+    write(message: string) {
+        this.info(message);
     }
 }
