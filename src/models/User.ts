@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
     userId: { type: String, unique: true, trim: true },
-    email: { type: String }
+    email: { type: String },
+    createdBy: String, //utente creazione
+    updatedBy: String  //utente ultimo aggiornamento
 }, {
         timestamps: true
     });

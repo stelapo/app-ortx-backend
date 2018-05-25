@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Model, Document } from "mongoose";
+import { Model, Document, SaveOptions } from "mongoose";
 import Logger from '../logger';
 
 abstract class BaseCtrl {
@@ -45,7 +45,8 @@ abstract class BaseCtrl {
 
     // Insert
     insert = (req: Request, resp: Response) => {
-        let obj: Document = new this.model(req.body);
+        let obj: any = new this.model(req.body);
+        obj.createdBy = req.user || 'nouser';
         obj.save((error: any, doc: any) => {
             if (error && error.code === 11000) {
                 this.logError(error);
@@ -61,7 +62,9 @@ abstract class BaseCtrl {
 
     // Update
     update = (req: Request, resp: Response) => {
-        this.model.findOneAndUpdate({ _id: req.params.id }, req.body, (err: any, doc: any) => {
+        let obj = req.body;
+        obj.updatedBy = req.user || 'nouser';
+        this.model.findOneAndUpdate({ _id: req.params.id }, obj, (err: any, doc: any) => {
             if (err) {
                 this.logError(err);
                 return resp.sendStatus(500);

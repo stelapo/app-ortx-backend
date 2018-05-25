@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const divisionSchema = new mongoose.Schema({
+const offerStateSchema = new mongoose.Schema({
     code: { type: String, unique: true, trim: true },
     description: String,
     createdBy: String, //utente creazione
@@ -9,11 +9,11 @@ const divisionSchema = new mongoose.Schema({
         timestamps: true
     });
 
-divisionSchema.set('toJSON', {
+    offerStateSchema.set('toJSON', {
     transform: function (doc: any, ret: any, options: any) {
         return ret;
     }
 });
 
-const DivisionModel = mongoose.model('Division', divisionSchema);
-export default DivisionModel;
+const OfferStateModel = mongoose.model('OfferState', offerStateSchema);
+export default OfferStateModel;

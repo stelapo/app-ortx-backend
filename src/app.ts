@@ -19,6 +19,7 @@ import * as jwt from 'jsonwebtoken';
 import BaseCtrl from "./controllers/BaseCtrl";
 import DivisionCtrl from './controllers/DivisionCtrl';
 import CustomerCtrl from './controllers/CustomerCtrl';
+import OfferCtrl from './controllers/OfferCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 
 //import * as path from "path";
@@ -276,11 +277,14 @@ class App {
         //
         const customerCtrl = new CustomerCtrl(this._logger);
         this.mountApiRoutesFromCtrl(customerCtrl, '/customers');
+        //
+        const offerCtrl = new OfferCtrl(this._logger);
+        this.mountApiRoutesFromCtrl(offerCtrl, '/offers');
     }
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
         const router = express.Router();
-        router.use(this.isAuthenticated);
+        //router.use(this.isAuthenticated);
         router.route('/count').get(ctrl.count);
         router.route('/').get(ctrl.getAll);
         router.route('/').post(ctrl.insert);

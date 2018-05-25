@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import sqlite3, { RunResult } from 'sqlite3';
 import Logger from './logger';
+import Config from './config';
 
 export default class Utils {
+
+    public static c: Config;
+    public static l: Logger;
+
     public static getTimestamp(): Date {
         var date = new Date(); // Or the date you'd like converted.
         var isoDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));

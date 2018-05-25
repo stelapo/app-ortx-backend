@@ -1,12 +1,23 @@
 import mongoose from "mongoose";
 import Utils from '../utils';
-import { c } from '../config';
 import Logger from '../logger';
 
 const offerSchema = new mongoose.Schema({
     year: Number,
     pgr: Number,
-    division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' }
+    title: String,
+    division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' }, //divisione
+    editor: String, //compilatore dell'offerta
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }, //insegna cliente
+    totalValue: Number,
+    percHdSf: Number, //percentuale valore "Hardware e software"
+    percRent: Number, //percentuale valore "Canoni"
+    percSrv: Number,  //percentuale valore "Servizi professionali"
+    state: { type: mongoose.Schema.Types.ObjectId, ref: 'OfferState' }, //stato offerta
+    acceptedAt: Date, //data accettazione
+    notes: String,
+    createdBy: String, //utente creazione
+    updatedBy: String  //utente ultimo aggiornamento
 }, {
         timestamps: true
     });
@@ -20,11 +31,12 @@ offerSchema.set('toJSON', {
 offerSchema.pre('save', function (next) {
     const offer: any = this;
     if (this.isNew) {
-        let num = Utils.getNextOfferNum(c.sqliteFile, new Logger('pippo', c));
+        let num = Utils.getNextOfferNum(Utils.c.sqliteFile, Utils.l);
         num.then(
             (n) => {
                 offer.year = (new Date()).getFullYear();
                 offer.pgr = n;
+                next();
             },
             (e) => {
                 next(e);
@@ -35,6 +47,10 @@ offerSchema.pre('save', function (next) {
 
     }
 });
+
+offerSchema.pre('update', function() {
+    this.update({},{ $set: { updatedBy: new Date() } });
+  });
 
 const OfferModel = mongoose.model('Offer', offerSchema);
 export default OfferModel;

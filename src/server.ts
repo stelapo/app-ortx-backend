@@ -4,6 +4,7 @@ import Config from "./config";
 import Metadata from './aadutils';
 //let sqlite = require('sqlite');
 import sqlite3 from 'sqlite3';
+import Utils from './utils';
 
 
 /*let sqlitedbPromise = Promise.resolve()
@@ -16,9 +17,11 @@ import sqlite3 from 'sqlite3';
 let sqliteDb = new sqlite3.Database('./database.sqlite');
 
 let conf: Config = new Config();
+Utils.c = conf;
 let app: App = new App(conf, sqliteDb);
 let express = app.express;
 let logger = app.logger;
+Utils.l = logger;
 let aadutils = new Metadata(conf.creds.federation_metadata);
 
 mongoose.Promise = global.Promise;

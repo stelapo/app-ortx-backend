@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const customerSchema = new mongoose.Schema({
     code: { type: String, unique: true, trim: true },
-    description: String
+    description: String,
+    createdBy: String, //utente creazione
+    updatedBy: String  //utente ultimo aggiornamento
 }, {
         timestamps: true
     });
