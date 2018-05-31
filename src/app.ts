@@ -7,20 +7,20 @@ import connectmongo from 'connect-mongo';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import OAuth2Strategy from 'passport-oauth2';
-//import AzureOAuth2Strategy from "passport-azure-oauth2";
 import morgan from 'morgan';
 import Config from './config';
 import Utils from './utils';
 import Logger from './logger';
 import { DailyRotateFileTransportInstance } from 'winston';
 import UserModel from "./models/User";
-var AzureOAuth2Strategy = require("passport-azure-oauth2");
 import * as jwt from 'jsonwebtoken';
 import BaseCtrl from "./controllers/BaseCtrl";
 import DivisionCtrl from './controllers/DivisionCtrl';
 import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
+// var AzureOAuth2Strategy = require("passport-azure-oauth2");
+var OIDCBearerStrategy = require('passport-azure-ad').BearerStrategy;
 
 //import * as path from "path";
 
@@ -88,10 +88,23 @@ class App {
         this._express.use(this.logErrors);
         this._express.use(this.clientErrorHandler);
         this._express.use(this.errorHandler);
+        this._express.use(function (req, res, next) {
+            console.log(req.headers);
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+            // intercept OPTIONS method
+            if ('OPTIONS' == req.method) {
+                res.sendStatus(200);
+            }
+            else {
+                next();
+            }
+        });
     }
 
     private preparePassport(): void {
-        passport.use('provider', new AzureOAuth2Strategy({ //new OAuth2Strategy({
+        /*passport.use('provider', new AzureOAuth2Strategy({ //new OAuth2Strategy({
             authorizationURL: this.conf.creds.authEndpoint,
             tokenURL: this.conf.creds.tokenEndpoint,
             clientID: this.conf.creds.clientID,
@@ -102,10 +115,7 @@ class App {
             var user =
                 jwt.decode(params.id_token, { complete: false });
             done(null, user);
-            /*UserModel.findOneAndUpdate({ UserId: profile.id }, function (err: Error, user: any) {
-                done(err, user);
-            });*/
-        }));
+        }));        
 
         passport.serializeUser(function (user: any, done: Function) {
             done(null, user);
@@ -113,13 +123,38 @@ class App {
 
         passport.deserializeUser(function (user: any, done: Function) {
             done(null, user);
-            /*UserModel.findById(id, function (err: Error, user: any) {
-                done(err, user);
-            });*/
-        });
+        });*/
 
         this._express.use(passport.initialize());
         this._express.use(passport.session());
+
+        var options = {
+            identityMetadata: this.conf.oAuthData.identityMetadata,
+            clientID: this.conf.oAuthData.clientID,
+            validateIssuer: this.conf.oAuthData.validateIssuer,
+            // issuer: config.creds.issuer,
+            passReqToCallback: this.conf.oAuthData.passReqToCallback,
+            isB2C: this.conf.oAuthData.isB2C,
+            // policyName: config.creds.policyName,
+            // allowMultiAudiencesInToken: config.creds.allowMultiAudiencesInToken,
+            audience: this.conf.oAuthData.audience,
+            loggingLevel: this.conf.oAuthData.loggingLevel,
+            loggingNoPII: this.conf.oAuthData.loggingNoPII
+            // clockSkew: config.creds.clockSkew,
+            // scope: config.creds.scope
+        };
+        var bearerStrategy = new OIDCBearerStrategy(options,
+            function (req: any, token: any, done: any) {
+                console.log(token, 'was the token retreived');
+                if (!token.oid)
+                    done(new Error('oid is not found in token'));
+                else {
+                    let owner = token.oid;
+                    done(null, token);
+                }
+            }
+        );
+        passport.use(bearerStrategy);
     }
 
     private prepareLog(): void {
@@ -284,7 +319,8 @@ class App {
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
         const router = express.Router();
-        //router.use(this.isAuthenticated);
+        // router.use(passport.authenticate('provider', { session: false }));
+        router.use(passport.authenticate('oauth-bearer', { session: false }));
         router.route('/count').get(ctrl.count);
         router.route('/').get(ctrl.getAll);
         router.route('/').post(ctrl.insert);

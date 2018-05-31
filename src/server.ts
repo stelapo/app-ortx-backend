@@ -22,7 +22,7 @@ let app: App = new App(conf, sqliteDb);
 let express = app.express;
 let logger = app.logger;
 Utils.l = logger;
-let aadutils = new Metadata(conf.creds.federation_metadata);
+//let aadutils = new Metadata(conf.creds.federation_metadata);
 
 mongoose.Promise = global.Promise;
 const mongodb = mongoose.connect(conf.mongoUrl);
