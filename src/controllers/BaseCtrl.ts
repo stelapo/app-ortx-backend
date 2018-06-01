@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { Model, Document, SaveOptions } from "mongoose";
 import Logger from '../logger';
+import Utils from '../utils';
 
 abstract class BaseCtrl {
     abstract model: Model<Document>;
-    private _logger: Logger;
+    //private _logger: Logger;
 
-    constructor(logger: Logger) {
-        this._logger = logger;
+    constructor(/*logger: Logger*/) {
+        //this._logger = logger;
     }
 
     // Get All
@@ -85,7 +86,7 @@ abstract class BaseCtrl {
     }
 
     private logError(err: any) {
-        this._logger.error('code=' + err.code + "; mess=" + err.message);
+        /*this._logger*/Utils.l.error('code=' + err.code + "; mess=" + err.message);
     }
 }
 

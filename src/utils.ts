@@ -97,8 +97,7 @@ export default class Utils {
         });
     }
 
-    public static async getNextOfferNum(sqliteFile: string, logger: Logger) {
-        //return await this.doPromiseNextOff(sqliteDb, logger).then((r) => { return r });
+    public static async getNextOfferNum(sqliteFile: string, logger: Logger) {        
         let y = await this.doPromiseNextOff(sqliteFile, logger);
         logger.debug("!!!!! getNextOfferNum = " + y);
         return y;

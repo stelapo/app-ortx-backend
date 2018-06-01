@@ -43,13 +43,12 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 11. `npm install --save express-auth-parser`
 12. `npm install --save passport` and `npm install --save-dev @types/passport`
 13. `npm install --save passport-oauth2` and `npm install --save-dev @types/passport-oauth2`
-
-14. `npm install --save passport-azure-oauth2`
-     npm install passport-azure-ad --save
-
+14. `npm install passport-azure-ad --save`
 15. `npm install --save passport-http-bearer` and `npm install --save-dev @types/passport-http-bearer`
 16. `npm install --save jsonwebtoken` and `npm install --save-dev @types/jsonwebtoken`
 17. `npm install xml2js --save` and `npm install --save-dev @types/xml2js`
 18. `npm install request --save` and `npm install --save-dev @types/request`
 19. `npm install async --save` and `npm install --save-dev @types/async`
 20. `npm install sqlite3 --save` and `npm install --save-dev @types/sqlite3`
+21. `npm install --save node-uuid` and `npm install --save-dev @types/node-uuid`
+22. `npm install --save express-http-context`

@@ -32,6 +32,7 @@ const mongodb = mongoose.connect(conf.mongoUrl);
 mongodb.then((db) => {
   express.listen(conf.port, (err: any) => {
     if (err) {
+      logger.error(err);
       return console.log(err);
     }
 
