@@ -19,6 +19,7 @@ import BaseCtrl from "./controllers/BaseCtrl";
 import DivisionCtrl from './controllers/DivisionCtrl';
 import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
+import OfferStateCtrl from './controllers/OfferStateCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 import uuid from 'node-uuid';
 var expressHttpContext = require('express-http-context');
@@ -179,11 +180,14 @@ class App {
         //Offers
         const offerCtrl = new OfferCtrl();
         this.mountApiRoutesFromCtrl(offerCtrl, '/offers');
+        //OfferStates
+        const offerStateCtrl = new OfferStateCtrl();
+        this.mountApiRoutesFromCtrl(offerStateCtrl, '/offerStates');
     }
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
         const router = express.Router();
-        router.use(passport.authenticate('oauth-bearer', { session: false }));
+        //router.use(passport.authenticate('oauth-bearer', { session: false }));
         router.route('/count').get(ctrl.count);
         router.route('/').get(ctrl.getAll);
         router.route('/').post(ctrl.insert);
