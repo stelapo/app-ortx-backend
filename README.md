@@ -52,3 +52,5 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 20. `npm install sqlite3 --save` and `npm install --save-dev @types/sqlite3`
 21. `npm install --save node-uuid` and `npm install --save-dev @types/node-uuid`
 22. `npm install --save express-http-context`
+23. `npm install --save multer` and `npm install --save-dev @types/multer`
+24. `npm install --save multer-gridfs-storage` and `npm install --save-dev @types/multer-gridfs-storage`

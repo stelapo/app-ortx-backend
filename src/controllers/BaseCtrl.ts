@@ -33,6 +33,16 @@ abstract class BaseCtrl {
         });
     }
 
+    getPopulated = (req: Request, resp: Response) => {
+        this.model.findOne({ _id: req.params.id }).populate('division').exec((err: Error, doc: Document) => {
+            if (err) {
+                this.logError(err);
+                return resp.sendStatus(500);
+            }
+            resp.status(200).json(doc);
+        });
+    }
+
     // Count All
     count = (req: Request, resp: Response) => {
         this.model.count({}, (err: Error, count: number) => {
@@ -85,7 +95,7 @@ abstract class BaseCtrl {
         });
     }
 
-    private logError(err: any) {
+    logError(err: any) {
         /*this._logger*/Utils.l.error('code=' + err.code + "; mess=" + err.message);
     }
 }

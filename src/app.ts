@@ -20,6 +20,7 @@ import DivisionCtrl from './controllers/DivisionCtrl';
 import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
 import OfferStateCtrl from './controllers/OfferStateCtrl';
+import DocTypeCtrl from './controllers/DocTypeCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 import uuid from 'node-uuid';
 var expressHttpContext = require('express-http-context');
@@ -183,6 +184,9 @@ class App {
         //OfferStates
         const offerStateCtrl = new OfferStateCtrl();
         this.mountApiRoutesFromCtrl(offerStateCtrl, '/offerStates');
+        //DocTypes
+        const docTypeCtrl = new DocTypeCtrl();
+        this.mountApiRoutesFromCtrl(docTypeCtrl, '/docTypes');
     }
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
@@ -192,6 +196,7 @@ class App {
         router.route('/').get(ctrl.getAll);
         router.route('/').post(ctrl.insert);
         router.route('/:id').get(ctrl.get);
+        router.route('/p/:id').get(ctrl.getPopulated);
         router.route('/:id').put(ctrl.update);
         router.route('/:id').delete(ctrl.delete);
         this._express.use(path, router);
