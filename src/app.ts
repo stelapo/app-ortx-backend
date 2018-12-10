@@ -5,17 +5,18 @@ import { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import connectmongo from 'connect-mongo';
 import bodyParser from 'body-parser';
-import passport from 'passport';
-import OAuth2Strategy from 'passport-oauth2';
+// import passport from 'passport'; // commentato per passaggio a gestione login con jwt
+// import OAuth2Strategy from 'passport-oauth2';  // commentato per passaggio a gestione login con jwt
 import morgan from 'morgan';
 import Config from './config';
 import Utils from './utils';
 import Logger from './logger';
 import PADLogger from './padLogger';
 import { DailyRotateFileTransportInstance } from 'winston';
-import UserModel from "./models/User";
+//import UserModel from "./models/User";
 import * as jwt from 'jsonwebtoken';
 import BaseCtrl from "./controllers/BaseCtrl";
+import UserCtrl from './controllers/UserCtrl';
 import DivisionCtrl from './controllers/DivisionCtrl';
 import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
@@ -24,6 +25,7 @@ import DocTypeCtrl from './controllers/DocTypeCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 import uuid from 'node-uuid';
 var expressHttpContext = require('express-http-context');
+import permit from './security/permissions';
 
 class App {
     private _version: string = '1.0.0';
@@ -40,9 +42,9 @@ class App {
         this._morganL = morgan(this.conf.morganFormat, { stream: this._logger });
         this._express = express();
         this.prepare();
-        this.preparePassport();
+        // this.preparePassport(); // commentato per passaggio a gestione login con jwt
         //Routes
-        this.mountHomeRoute();
+        this.mountPublicRoute();
         this.mountApiRoutes();
 
         this._logger.info('App is starting.');
@@ -117,7 +119,8 @@ class App {
         });
     }
 
-    private preparePassport(): void {
+    // commentato per passaggio a gestione login con jwt
+    /*private preparePassport(): void {
         this._express.use(passport.initialize());
         this._express.use(passport.session());
 
@@ -151,15 +154,19 @@ class App {
             }
         );
         passport.use(bearerStrategy);
-    }
+    }*/
 
     // Prepare the / route to show a hello world page
-    private mountHomeRoute(): void {
+    private mountPublicRoute(): void {
         this._express.get("/home", (req, res) => {
             res.json({
                 message: "Hello World!"
             });
         });
+
+        const userTypeCtrl = new UserCtrl(this._conf.bcrypt_psw);
+        this._express.post("/register", userTypeCtrl.insert);
+        this._express.post("/login", userTypeCtrl.login);
 
         /*this._express.get('/sqlite2', (req, res) => {
             let num = Utils.getNextOfferNum(this.conf.sqliteFile, this._logger);
@@ -191,7 +198,7 @@ class App {
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
         const router = express.Router();
-        //router.use(passport.authenticate('oauth-bearer', { session: false }));
+        //router.use(passport.authenticate('oauth-bearer', { session: false })); --autenticazione con oauth azure
         router.route('/count').get(ctrl.count);
         router.route('/').get(ctrl.getAll);
         router.route('/').post(ctrl.insert);
@@ -199,7 +206,7 @@ class App {
         router.route('/p/:id').get(ctrl.getPopulated);
         router.route('/:id').put(ctrl.update);
         router.route('/:id').delete(ctrl.delete);
-        this._express.use(path, router);
+        this._express.use(path, permit(this._conf.bcrypt_psw, 'admin', 'user'), router); //this._express.use(path, router);
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: Function) {

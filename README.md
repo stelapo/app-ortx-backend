@@ -54,3 +54,4 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 22. `npm install --save express-http-context`
 23. `npm install --save multer` and `npm install --save-dev @types/multer`
 24. `npm install --save multer-gridfs-storage` and `npm install --save-dev @types/multer-gridfs-storage`
+25. `npm install --save bcryptjs` and `npm install --save-dev @types/bcryptjs`
