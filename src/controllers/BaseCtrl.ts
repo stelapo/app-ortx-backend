@@ -22,6 +22,16 @@ abstract class BaseCtrl {
         });
     }
 
+    getAllPopulated = (req: Request, resp: Response) => {
+        this.model.find({}, (err: Error, docs: Document[]) => {
+            if (err) {
+                this.logError(err);
+                return resp.sendStatus(500);
+            }
+            resp.status(200).json(docs);
+        });
+    }
+
     // Get By Id
     get = (req: Request, resp: Response) => {
         this.model.findOne({ _id: req.params.id }, (err: Error, doc: Document) => {
@@ -34,7 +44,7 @@ abstract class BaseCtrl {
     }
 
     getPopulated = (req: Request, resp: Response) => {
-        this.model.findOne({ _id: req.params.id }).populate('division').exec((err: Error, doc: Document) => {
+        this.model.findOne({ _id: req.params.id }).exec((err: Error, doc: Document) => {
             if (err) {
                 this.logError(err);
                 return resp.sendStatus(500);

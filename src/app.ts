@@ -201,6 +201,7 @@ class App {
         //router.use(passport.authenticate('oauth-bearer', { session: false })); --autenticazione con oauth azure
         router.route('/count').get(ctrl.count);
         router.route('/').get(ctrl.getAll);
+        router.route('/p/').get(ctrl.getAllPopulated);
         router.route('/').post(ctrl.insert);
         router.route('/:id').get(ctrl.get);
         router.route('/p/:id').get(ctrl.getPopulated);
