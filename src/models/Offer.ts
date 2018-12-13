@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Utils from '../utils';
 import Logger from '../logger';
 
+const arrayOfFiles = [{ type: mongoose.Schema.Types.ObjectId, ref: 'fs.file' }];
 const offerSchema = new mongoose.Schema({
     year: Number,
     pgr: Number,
@@ -14,6 +15,8 @@ const offerSchema = new mongoose.Schema({
     percRent: Number, //percentuale valore "Canoni"
     percSrv: Number,  //percentuale valore "Servizi professionali"
     state: { type: mongoose.Schema.Types.ObjectId, ref: 'OfferState' }, //stato offerta
+    docs: arrayOfFiles,
+    fatture: arrayOfFiles,
     acceptedAt: Date, //data accettazione
     notes: String,
     createdBy: String, //utente creazione

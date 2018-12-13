@@ -1,9 +1,9 @@
-import { Document } from 'mongoose';
+// import { Document } from 'mongoose';
 import express from "express";
 import * as core from "express-serve-static-core";
 import { Request, Response, NextFunction } from 'express';
-import session from 'express-session';
-import connectmongo from 'connect-mongo';
+// import session from 'express-session';
+// import connectmongo from 'connect-mongo';
 import bodyParser from 'body-parser';
 // import passport from 'passport'; // commentato per passaggio a gestione login con jwt
 // import OAuth2Strategy from 'passport-oauth2';  // commentato per passaggio a gestione login con jwt
@@ -22,10 +22,15 @@ import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
 import OfferStateCtrl from './controllers/OfferStateCtrl';
 import DocTypeCtrl from './controllers/DocTypeCtrl';
+import FileCtrl from './controllers/FileCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 import uuid from 'node-uuid';
 var expressHttpContext = require('express-http-context');
 import permit from './security/permissions';
+import GridFSStorage from "multer-gridfs-storage";
+import multer = require("multer");
+import Grid from "gridfs-stream";
+import { Mongoose } from "mongoose";
 
 class App {
     private _version: string = '1.0.0';
@@ -46,6 +51,7 @@ class App {
         //Routes
         this.mountPublicRoute();
         this.mountApiRoutes();
+        // this.prepareFileManage();
 
         this._logger.info('App is starting.');
         this._logger.info('Version ' + this._version);
@@ -108,7 +114,8 @@ class App {
 
             res.header("Access-Control-Allow-Origin", "*");
             res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+            res.header("Access-Control-Allow-Headers", "Origin, Accept,Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+            res.header("Access-Control-Allow-Credentials", "true");
             // intercept OPTIONS method
             if ('OPTIONS' == req.method) {
                 res.sendStatus(200);
@@ -194,6 +201,9 @@ class App {
         //DocTypes
         const docTypeCtrl = new DocTypeCtrl();
         this.mountApiRoutesFromCtrl(docTypeCtrl, '/docTypes');
+        //Files
+        const fileCtrl = new FileCtrl();
+        this.mountApiRoutesFromCtrl(fileCtrl, '/filectrl');
     }
 
     private mountApiRoutesFromCtrl(ctrl: BaseCtrl, path: string) {
@@ -208,6 +218,164 @@ class App {
         router.route('/:id').put(ctrl.update);
         router.route('/:id').delete(ctrl.delete);
         this._express.use(path, permit(this._conf.bcrypt_psw, 'admin', 'user'), router); //this._express.use(path, router);
+    }
+
+    public prepareFileManage(database: Mongoose): void {
+        this._logger.debug('Preparing GridFSStorage...');
+
+        let gfs = Grid(database.connection, database.mongo);
+        let myMongoCLient: any;
+        database.mongo.connect(this._conf.mongoUrl).then((client) => {
+            myMongoCLient = client;
+        });
+
+        let mystorage = new GridFSStorage({
+            // url: this._conf.mongoUrl,
+            db: database,
+            // options: { root: 'ctFiles' },
+            file: function (req, file) {
+                // console.log(`File ${file.originalname}`);
+                return {
+                    filename: file.originalname,
+                    metadata: {
+                        extension: file.originalname.split('.')[file.originalname.split('.').length - 1],
+                        encoding: file.encoding // ,
+                        // filename: file.originalname,
+                        // user: req.user,
+                        // tags: []
+                    }
+                }
+            }
+        });
+        mystorage.on('streamError', (err) => {
+            this._logger.debug("streamError!!!!!");
+            this._logger.debug(err);
+        });
+        mystorage.on('dbError', (err) => {
+            this._logger.debug("dbError!!!!!");
+            this._logger.debug(err);
+        });
+        mystorage.on('connection', (db) => {
+            this._logger.debug("connection!!!!!");
+        });
+        mystorage.on('connectionFailed', (err) => {
+            this._logger.debug(err);
+        });
+        mystorage.on('file', (file) => {
+            this._logger.debug("uploaded file!!!!!");
+            this._logger.debug(JSON.stringify(file));
+        });
+
+        const upload = multer({ //multer settings for upload
+            storage: mystorage
+        }).single('file');
+
+        this._express.post('/uploadFile', permit(this._conf.bcrypt_psw, 'admin', 'user'), (req, res) => {
+            this._logger.debug('called /uploadFile');
+            upload(req, res, (err) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500);
+                    res.send(err);
+                } else {
+                    // console.log(req.file);
+                    res.json({
+                        file_uploaded: true,
+                        file: req.file
+                    });
+                }
+            });
+        });
+
+        /*this._express.get('/filebyname/:filename', permit(this._conf.bcrypt_psw, 'admin', 'user'), (req, res) => {
+            gfs.collection('fs'); //set collection name to lookup into
+
+            gfs.files.find({ filename: req.params.filename }).toArray(function (err, files) {
+                console.debug('Searching file ' + req.params.filename);
+                if (!files || files.length === 0) {
+                    return res.status(404).json({
+                        responseCode: 1,
+                        responseMessage: "any file found"
+                    });
+                }
+                // create read stream
+                let options = {
+                    filename: files[0].filename //,
+                    //root: 'fs.files'
+                };
+                var readstream = gfs.createReadStream(options);
+
+                //error handling, e.g. file does not exist
+                readstream.on('error', function (err) {
+                    console.log('readstream:: An error occurred!', err);
+                    throw err;
+                });
+
+                // set the proper content type 
+                res.set('Content-Type', files[0].contentType)
+                // Return response
+                return readstream.pipe(res);
+            });
+        });*/
+
+        this._express.get('/searchfilebyname/:filename', permit(this._conf.bcrypt_psw, 'admin', 'user'), (req, res) => {
+            gfs.collection('fs'); //set collection name to lookup into
+
+            gfs.files.find({ filename: req.params.filename }).toArray(function (err, files) {
+                console.debug('Searching file ' + req.params.filename);
+                if (!files || files.length === 0) {
+                    return res.status(404).json({
+                        responseCode: 1,
+                        responseMessage: "any file found"
+                    });
+                } else {
+                    res.setHeader("Content-Type", 'application/json');
+                    res.status(200).send(files);
+                }
+            });
+        });
+
+        this._express.get('/file/:id', permit(this._conf.bcrypt_psw, 'admin', 'user'), (req, res) => {
+            gfs.collection('fs'); //set collection name to lookup into
+
+            var o_id = new database.mongo.ObjectID(req.params.id);
+
+            gfs.files.findOne({ _id: o_id }).then((file) => {
+                console.debug('Found file ' + req.params.id);
+                if (!file) {
+                    return res.status(404).json({
+                        responseCode: 1,
+                        responseMessage: "any file found"
+                    });
+                }
+
+                res.setHeader("Content-Type", file.contentType);
+                res.setHeader("Content-Length", file.length);
+
+                let gfsBucket = new database.mongo.GridFSBucket(myMongoCLient/*.db()*/, {
+                    chunkSizeBytes: 1024
+                });
+
+                gfsBucket.openDownloadStreamByName(file.filename).
+                    pipe(res /*fs.createWriteStream('./incontro_a_modena_SOGEGROSS.txt')*/).
+                    on('error', function (error) {
+                        console.debug('File download error');
+                        console.debug(error);
+                    }).
+                    on('finish', function () {
+                        console.debug('File downloaded!');
+                        res.end(); //process.exit(0);
+                    });
+            }).catch((err) => {
+                console.debug('Error downloading file...');
+                console.debug(err);
+                return res.status(404).json({
+                    responseCode: 1,
+                    responseMessage: "error downloading file",
+                    error: err.message
+                });
+            });
+        });
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: Function) {

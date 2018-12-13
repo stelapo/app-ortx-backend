@@ -7,7 +7,7 @@ export default class OfferCtrl extends BaseCtrl {
     model = OfferModel;
 
     getPopulated = (req: Request, resp: Response) => {
-        this.model.findOne({ _id: req.params.id }).populate('division').populate('state').populate('customer').exec((err: Error, doc: Document) => {
+        this.model.findOne({ _id: req.params.id }).populate('division').populate('state').populate('customer').populate('docs').exec((err: Error, doc: Document) => {
             if (err) {
                 this.logError(err);
                 return resp.sendStatus(500);

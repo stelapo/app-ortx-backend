@@ -25,8 +25,8 @@ Utils.l = logger;
 //let aadutils = new Metadata(conf.creds.federation_metadata);
 
 mongoose.Promise = global.Promise;
-const mongodb = mongoose.connect(conf.mongoUrl);
-
+const mongodb = mongoose.connect(conf.mongoUrl, { db: { readPreference: 'PRIMARY' }, readPreference: 'PRIMARY' });
+//var db = mongoose.connection;
 
 
 mongodb.then((db) => {
@@ -37,6 +37,10 @@ mongodb.then((db) => {
     }
 
     logger.debug(`Server is listening on ${conf.port}`);
+
+    app.prepareFileManage(db);
+
+
     return;
   });
 }).catch((err: Error) => { console.error(err) });
