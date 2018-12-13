@@ -393,7 +393,7 @@ class App {
     }
 
     private errorHandler(err: Error, req: Request, res: Response, next: Function) {
-        this._logger.error(`500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+        // this._logger.error(`500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
         res.status(500)
         res.render('error', { error: err })
     }

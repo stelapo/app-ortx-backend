@@ -6,16 +6,6 @@
     "auditLog": "log/.audit.json",
     "files": [
         {
-            "date": 1544721756001,
-            "name": "log/20181213_winston.log",
-            "hash": "07a5fedf623d6928b9eaf4bf95e7a5b2"
-        },
-        {
-            "date": 1544721787847,
-            "name": "log/20181213_winston.log",
-            "hash": "a3f35fa33af773d6444950908663e6d3"
-        },
-        {
             "date": 1544721835266,
             "name": "log/20181213_winston.log",
             "hash": "b6351bad48d2367a314e24a666a2af66"
@@ -39,6 +29,16 @@
             "date": 1544723391792,
             "name": "log/20181213_winston.log",
             "hash": "506153a2d3cbb674f65c96c17d593fef"
+        },
+        {
+            "date": 1544723663531,
+            "name": "log/20181213_winston.log",
+            "hash": "b58a64538c540db019ebe9fe9352afaf"
+        },
+        {
+            "date": 1544723761907,
+            "name": "log/20181213_winston.log",
+            "hash": "6ae18d440684e6f4779e21652707f184"
         }
     ]
 }
