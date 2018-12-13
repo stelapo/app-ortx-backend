@@ -352,7 +352,7 @@ class App {
                 res.setHeader("Content-Type", file.contentType);
                 res.setHeader("Content-Length", file.length);
 
-                let gfsBucket = new database.mongo.GridFSBucket(myMongoCLient/*.db()*/, {
+                let gfsBucket = new database.mongo.GridFSBucket(myMongoCLient.db(), {
                     chunkSizeBytes: 1024
                 });
 
