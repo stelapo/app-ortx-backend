@@ -56,3 +56,18 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 24. `npm install --save multer-gridfs-storage` and `npm install --save-dev @types/multer-gridfs-storage`
 25. `npm install --save bcryptjs` and `npm install --save-dev @types/bcryptjs`
 26. `npm install --save gridfs-stream` and `npm install --save-dev @types/gridfs-stream`
+
+
+## How to install ##
+### On client ###
+1. `cd AppOrtxBackend`
+2. Compile with `tsc`
+2. scp to server 
+ - `scp -r dist/ <usernam>@<hostname>:AppOrtxBackend/`
+ - `scp package*.json <usernam>@<hostname>:AppOrtxBackend/`
+
+### On server ###
+1. `pm2 stop 0`
+2. `cd AppOrtxBackend`
+3. `npm install`
+4. `pm2 start 0`
