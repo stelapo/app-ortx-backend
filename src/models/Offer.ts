@@ -5,19 +5,28 @@ import Logger from '../logger';
 const arrayOfFiles = [{ type: mongoose.Schema.Types.ObjectId, ref: 'fs.file' }];
 const offerSchema = new mongoose.Schema({
     year: Number,
-    pgr: Number,
+    pgr: String,
     title: String,
     division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' }, //divisione
     editor: String, //compilatore dell'offerta
     customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }, //insegna cliente
+    ragsoc: String, //ragione sociale cliente aal'interno dell'insegna cliente
     totalValue: Number,
     percHdSf: Number, //percentuale valore "Hardware e software"
     percRent: Number, //percentuale valore "Canoni"
     percSrv: Number,  //percentuale valore "Servizi professionali"
     state: { type: mongoose.Schema.Types.ObjectId, ref: 'OfferState' }, //stato offerta
-    docs: arrayOfFiles,
-    fatture: arrayOfFiles,
+   // docs: arrayOfFiles,
+    docs:[{
+        year: Number,
+        pgr: String,
+        docType: { type: mongoose.Schema.Types.ObjectId, ref: 'DocType' },
+        file: { type: mongoose.Schema.Types.ObjectId, ref: 'fs.file' }
+    }],
+    //fatture: arrayOfFiles,
     acceptedAt: Date, //data accettazione
+    createdAt: Date, //data creazione
+    updatedAt: Date, //data ult aggiornamento
     notes: String,
     createdBy: String, //utente creazione
     updatedBy: String  //utente ultimo aggiornamento
@@ -30,6 +39,7 @@ offerSchema.set('toJSON', {
         return ret;
     }
 });
+
 
 offerSchema.pre('save', function (next) {
     const offer: any = this;

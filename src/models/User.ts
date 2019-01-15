@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     role: String,
     division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' },
     createdBy: String, //utente creazione
+    updatedAt: Date, //data ult aggiornamento
     updatedBy: String  //utente ultimo aggiornamento
 }, {
         timestamps: true
