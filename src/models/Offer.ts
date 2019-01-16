@@ -62,7 +62,7 @@ offerSchema.pre('save', function (next) {
 });
 
 offerSchema.pre('update', function() {
-    this.update({},{ $set: { updatedBy: new Date() } });
+    this.update({},{ $set: { updatedAt: new Date() } });
   });
 
 const OfferModel = mongoose.model('Offer', offerSchema);

@@ -22,6 +22,7 @@ import CustomerCtrl from './controllers/CustomerCtrl';
 import OfferCtrl from './controllers/OfferCtrl';
 import OfferStateCtrl from './controllers/OfferStateCtrl';
 import DocTypeCtrl from './controllers/DocTypeCtrl';
+import InvoiceCtrl from './controllers/InvoiceCtrl';
 import FileCtrl from './controllers/FileCtrl';
 import sqlite3, { RunResult, Statement } from 'sqlite3';
 import uuid from 'node-uuid';
@@ -114,7 +115,7 @@ class App {
 
             res.header("Access-Control-Allow-Origin", "*");
             res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-            res.header("Access-Control-Allow-Headers", "Origin, Accept,Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+            res.header("Access-Control-Allow-Headers", "Origin, Accept,Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, Pragma, Cache-Control, Expires");
             res.header("Access-Control-Allow-Credentials", "true");
             // intercept OPTIONS method
             if ('OPTIONS' == req.method) {
@@ -186,7 +187,7 @@ class App {
     }
 
     private mountApiRoutes(): void {
-        //Divisions
+         //Divisions
         const divisionCtrl = new DivisionCtrl();
         this.mountApiRoutesFromCtrl(divisionCtrl, '/divisions');
         //Customers
@@ -195,6 +196,9 @@ class App {
         //Offers
         const offerCtrl = new OfferCtrl();
         this.mountApiRoutesFromCtrl(offerCtrl, '/offers');
+        //Invoices
+        const invoiceCtrl = new InvoiceCtrl();
+        this.mountApiRoutesFromCtrl(invoiceCtrl, '/invoices');
         //OfferStates
         const offerStateCtrl = new OfferStateCtrl();
         this.mountApiRoutesFromCtrl(offerStateCtrl, '/offerStates');
@@ -217,7 +221,8 @@ class App {
         router.route('/p/:id').get(ctrl.getPopulated);
         router.route('/:id').put(ctrl.update);
         router.route('/:id').delete(ctrl.delete);
-        this._express.use(path, permit(this._conf.bcrypt_psw, 'admin', 'user'), router); //this._express.use(path, router);
+       // this._express.use(path, permit(this._conf.bcrypt_psw, 'admin', 'user'), router); 
+        this._express.use(path, router);
     }
 
     public prepareFileManage(database: Mongoose): void {

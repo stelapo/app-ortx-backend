@@ -60,7 +60,7 @@ From https://basarat.gitbooks.io/typescript/docs/quick/nodejs.html
 
 ## How to install ##
 ### On client ###
-1. `cd AppOrtxBackend`
+1. `cd app-ortx-backend`
 2. Compile with `tsc`
 2. scp to server 
  - `scp -r dist/ <usernam>@<hostname>:AppOrtxBackend/`
